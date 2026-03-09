@@ -5,6 +5,8 @@ public class MeResponse
 {
     public int IdUsuario { get; set; }
     public string NombreUsuario { get; set; } = "";
+    public string NombreCompleto { get; set; } = "";
+    public string Correo { get; set; } = "";
     public int IdEmpresa { get; set; }
     public string NombreEmpresa { get; set; } = "";
 }

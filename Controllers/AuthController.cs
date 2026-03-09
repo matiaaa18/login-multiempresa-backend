@@ -41,6 +41,19 @@ public class AuthController : ControllerBase
     {
         try
         {
+            var identificador = string.IsNullOrWhiteSpace(request.Correo)
+                ? request.NombreUsuario?.Trim().ToLower()
+                : request.Correo.Trim().ToLower();
+
+            if (string.IsNullOrWhiteSpace(identificador))
+            {
+                return BadRequest(new ErrorResponse
+                {
+                    Mensaje = "Debes ingresar correo o nombre de usuario",
+                    Codigo = "MISSING_LOGIN_IDENTIFIER"
+                });
+            }
+
             // PASO 1: Buscar empresa por subdominio
             var empresa = await _db.Empresas
                 .FirstOrDefaultAsync(e => e.Subdominio == request.Subdominio.ToLower().Trim());
@@ -57,10 +70,10 @@ public class AuthController : ControllerBase
             var usuario = await _db.Usuarios
                 .FirstOrDefaultAsync(u =>
                     u.IdEmpresa == empresa.Id &&
-                    u.NombreUsuario == request.NombreUsuario);
+                    (u.Correo.ToLower() == identificador || u.NombreUsuario.ToLower() == identificador));
 
             // FIX: Validar que el usuario exista Y esté activo
-            if (usuario == null || !usuario.Activo)
+            if (usuario == null || !usuario.Activo || !usuario.Vigencia)
                 return Unauthorized(new ErrorResponse
                 {
                     Mensaje = "Usuario o contraseña inválidos",
@@ -197,6 +210,8 @@ public class AuthController : ControllerBase
             {
                 IdUsuario = usuario.Id,
                 NombreUsuario = usuario.NombreUsuario,
+                NombreCompleto = usuario.Nombre + " " + usuario.ApellidoPaterno + (usuario.ApellidoMaterno != null ? " " + usuario.ApellidoMaterno : ""),
+                Correo = usuario.Correo,
                 IdEmpresa = empresa.Id,
                 NombreEmpresa = empresa.Nombre
             });

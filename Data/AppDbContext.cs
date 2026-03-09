@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
 
     // Cada DbSet es una "puerta" a una tabla
     public DbSet<Models.Empresa> Empresas { get; set; }
+    public DbSet<Models.Sexo> Sexos { get; set; }
     public DbSet<Models.Usuario> Usuarios { get; set; }
     public DbSet<Models.RefreshToken> RefreshTokens { get; set; }
 

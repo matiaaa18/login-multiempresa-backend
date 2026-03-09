@@ -5,9 +5,11 @@ namespace Backend.DTOs;
 
 public class LoginRequest
 {
-    [Required(ErrorMessage = "El nombre de usuario es requerido")]
+    [EmailAddress(ErrorMessage = "El correo no es válido")]
+    public string? Correo { get; set; }
+
     [MinLength(3, ErrorMessage = "El usuario debe tener al menos 3 caracteres")]
-    public string NombreUsuario { get; set; } = "";
+    public string? NombreUsuario { get; set; }
 
     [Required(ErrorMessage = "La contraseña es requerida")]
     [MinLength(1, ErrorMessage = "La contraseña no puede estar vacía")]
